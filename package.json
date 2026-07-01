@@ -1,0 +1,121 @@
+{
+  "name": "spec-runner-vscode",
+  "displayName": "spec-runner",
+  "description": "Drive spec-runner's gated-spec governance and task execution natively inside VSCode.",
+  "version": "0.1.0",
+  "publisher": "andrei-shtanakov",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andrei-shtanakov/spec-runner-vscode"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [
+    "workspaceContains:spec/tasks.md",
+    "workspaceContains:spec/*.md",
+    "workspaceContains:spec-runner.config.yaml"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "spec-runner",
+          "title": "spec-runner",
+          "icon": "$(checklist)"
+        }
+      ]
+    },
+    "views": {
+      "spec-runner": [
+        { "id": "specRunner.spec", "name": "Spec" },
+        { "id": "specRunner.tasks", "name": "Tasks" },
+        { "id": "specRunner.run", "name": "Run" }
+      ]
+    },
+    "commands": [
+      { "command": "specRunner.refresh", "title": "spec-runner: Refresh", "icon": "$(refresh)" },
+      { "command": "specRunner.approve", "title": "Approve", "icon": "$(check)" },
+      { "command": "specRunner.reject", "title": "Reject", "icon": "$(discard)" },
+      { "command": "specRunner.generate", "title": "Generate", "icon": "$(sparkle)" },
+      { "command": "specRunner.regenerate", "title": "Regenerate", "icon": "$(sync)" },
+      { "command": "specRunner.edit", "title": "Edit", "icon": "$(edit)" },
+      { "command": "specRunner.generateNext", "title": "spec-runner: Generate next stage" },
+      { "command": "specRunner.runTask", "title": "Run task", "icon": "$(play)" },
+      { "command": "specRunner.runAll", "title": "Run all", "icon": "$(run-all)" },
+      { "command": "specRunner.stop", "title": "Stop", "icon": "$(stop)" },
+      { "command": "specRunner.logs", "title": "Logs", "icon": "$(output)" }
+    ],
+    "menus": {
+      "view/title": [
+        { "command": "specRunner.refresh", "when": "view == specRunner.spec", "group": "navigation" },
+        { "command": "specRunner.runAll", "when": "view == specRunner.tasks", "group": "navigation" },
+        { "command": "specRunner.stop", "when": "view == specRunner.tasks", "group": "navigation" }
+      ],
+      "view/item/context": [
+        { "command": "specRunner.approve", "when": "view == specRunner.spec && viewItem =~ /canApprove/", "group": "inline@1" },
+        { "command": "specRunner.reject", "when": "view == specRunner.spec && viewItem =~ /canReject/", "group": "inline@2" },
+        { "command": "specRunner.regenerate", "when": "view == specRunner.spec && viewItem =~ /canRegenerate/", "group": "inline@3" },
+        { "command": "specRunner.generate", "when": "view == specRunner.spec && viewItem =~ /canGenerate/", "group": "inline@1" },
+        { "command": "specRunner.edit", "when": "view == specRunner.spec && viewItem =~ /canEdit/", "group": "inline@4" },
+        { "command": "specRunner.runTask", "when": "view == specRunner.tasks && viewItem =~ /canRun/", "group": "inline@1" },
+        { "command": "specRunner.logs", "when": "view == specRunner.tasks && viewItem =~ /task/", "group": "inline@2" }
+      ]
+    },
+    "configuration": {
+      "title": "spec-runner",
+      "properties": {
+        "spec-runner.path": {
+          "type": "string",
+          "default": "",
+          "description": "Path or command for the spec-runner binary. Empty = auto-detect (.venv/bin/spec-runner, `uv run spec-runner`, or `spec-runner` on PATH). May include args, e.g. `uv run spec-runner`."
+        },
+        "spec-runner.specPrefix": {
+          "type": "string",
+          "default": "",
+          "description": "Multi-phase spec prefix (e.g. `phase2-`), threaded into all CLI calls and watcher paths."
+        },
+        "spec-runner.confirmBeforeRun": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show a modal confirm before running tasks (executes code, git operations, spends API budget)."
+        },
+        "spec-runner.confirmBeforeGenerate": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show a modal confirm before generating a spec stage (invokes an LLM, spends API budget)."
+        },
+        "spec-runner.ignoreVersionPin": {
+          "type": "boolean",
+          "default": false,
+          "description": "Do not degrade to read-only when the detected spec-runner is older than the pinned minimum. For local development against an unreleased spec-runner."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "node esbuild.js --production",
+    "watch": "node esbuild.js --watch",
+    "check-types": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/semver": "^7.5.8",
+    "@types/vscode": "^1.90.0",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "semver": "^7.6.3",
+    "yaml": "^2.5.1"
+  }
+}
