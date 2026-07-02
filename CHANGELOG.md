@@ -18,6 +18,9 @@ Initial scaffold — a thin read-model + action-dispatcher over spec-runner's CL
 - Config-resolved binary/state-DB/spec-prefix/governance (honors custom paths).
 - Unit tests for the vscode-free core (cli argv/parse, frontmatter reader,
   status normalization, schema validation).
+- Integration tests (`@vscode/test-electron`) driving a real extension host
+  against a fake `spec-runner` (canned JSON + argv log): `activate → tree render
+  → command → CLI-dispatch`, no Python/LLM.
 
 Pins spec-runner's `status.schema.json`, `costs.schema.json`, and
 `spec-frontmatter.schema.json` (published in the spec-runner contract PR).

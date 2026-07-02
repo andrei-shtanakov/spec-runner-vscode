@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "out",
+    "rootDir": ".",
+    "noEmit": false,
+    "types": ["node", "mocha", "vscode"]
+  },
+  "include": ["test-integration/**/*.ts", "src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "test"]
+}

@@ -15,10 +15,23 @@ import { TasksTreeProvider } from "./trees/tasksTree";
 import { RunTreeProvider } from "./trees/runTree";
 import { createWatchers } from "./watchers";
 
-export async function activate(context: vscode.ExtensionContext): Promise<void> {
+/** Public API returned from activate() — used by integration tests. */
+export interface ExtensionApi {
+  controller: SpecRunnerController;
+  trees: {
+    spec: SpecTreeProvider;
+    tasks: TasksTreeProvider;
+    run: RunTreeProvider;
+  };
+  isReadOnly: () => boolean;
+}
+
+export async function activate(
+  context: vscode.ExtensionContext,
+): Promise<ExtensionApi | undefined> {
   const folder = vscode.workspace.workspaceFolders?.[0];
   if (!folder) {
-    return;
+    return undefined;
   }
 
   const cfg = resolveConfig(folder);
@@ -51,6 +64,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   context.subscriptions.push(...createWatchers(folder, cfg, () => void controller.refresh()));
 
   await controller.refresh();
+
+  return {
+    controller,
+    trees: { spec: specTree, tasks: tasksTree, run: runTree },
+    isReadOnly: readOnly,
+  };
 }
 
 async function gateReadiness(

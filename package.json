@@ -103,12 +103,18 @@
     "check-types": "tsc --noEmit",
     "lint": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "compile-integration": "tsc -p tsconfig.integration.json",
+    "pretest:integration": "npm run build && npm run compile-integration",
+    "test:integration": "vscode-test"
   },
   "devDependencies": {
+    "@types/mocha": "^10.0.7",
     "@types/node": "^22.0.0",
     "@types/semver": "^7.5.8",
     "@types/vscode": "^1.90.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
     "esbuild": "^0.24.0",
     "typescript": "^5.6.0",
     "vitest": "^2.1.0"

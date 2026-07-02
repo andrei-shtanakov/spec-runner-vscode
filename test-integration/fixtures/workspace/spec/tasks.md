@@ -1,0 +1,18 @@
+---
+spec_stage: tasks
+status: approved
+version: 2
+generated_by: claude
+generated_at: 2026-07-01T00:00:00Z
+source_prompt_version: abc123
+validation: pass
+approved_by: operator
+approved_at: 2026-07-01T01:00:00Z
+---
+# Tasks
+
+### TASK-001: Login page
+🔴 P0 | ✅ DONE | Est: 1d
+
+### TASK-002: Dashboard
+🟡 P2 | ⬜ TODO | Est: 1d

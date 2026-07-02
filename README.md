@@ -59,10 +59,24 @@ All writes/execution go through the CLI: `spec approve/reject/check`,
 
 ```bash
 npm install
-npm run build          # esbuild bundle → dist/extension.js
-npm test               # vitest unit tests (vscode-free core)
-npm run check-types    # tsc --noEmit
+npm run build            # esbuild bundle → dist/extension.js
+npm test                 # vitest unit tests (vscode-free core, no host)
+npm run test:integration # @vscode/test-electron: real host + fake spec-runner
+npm run check-types      # tsc --noEmit
 # F5 in VSCode launches an Extension Development Host.
 ```
+
+### Test layers
+
+- **Unit** (`test/`, vitest) — the vscode-free core: cli argv/parse, frontmatter
+  reader, status normalization, schema validation. Fast, no VS Code.
+- **Integration** (`test-integration/`, `@vscode/test-electron`) — a real VS Code
+  extension host opens a fixture workspace whose `spec-runner.path` points at a
+  fake `spec-runner` (a node script emitting canned JSON and logging its argv).
+  Exercises `activate → tree render → command → CLI-dispatch` without Python or an
+  LLM. First run downloads VS Code (~260 MB); kept out of `npm test`.
+- **Contract** — vendored `schemas/*.json` are the pin; unit tests validate
+  sample fixtures against them (spec-runner's `test_vscode_contract.py` validates
+  live output against the same schemas).
 
 Distribution v1 is a `.vsix` (`npx @vscode/vsce package`); Marketplace later.

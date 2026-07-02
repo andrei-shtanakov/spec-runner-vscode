@@ -1,0 +1,5 @@
+{
+  "spec-runner.path": "node ./bin/fake-spec-runner.js",
+  "spec-runner.confirmBeforeRun": false,
+  "spec-runner.confirmBeforeGenerate": false
+}

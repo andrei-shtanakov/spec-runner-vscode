@@ -5,3 +5,4 @@ out/
 .vscode-test/
 coverage/
 *.log
+test-integration/fixtures/workspace/bin/calls.log
