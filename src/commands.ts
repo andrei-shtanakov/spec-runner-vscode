@@ -57,6 +57,49 @@ async function runAndReport(deps: Deps, subcommand: string[], label: string): Pr
   return true;
 }
 
+/**
+ * Ask for the generate seed: a typed one-liner or a file (`--from-file`), the
+ * two input channels spec-runner's `plan` accepts. Returns undefined on cancel.
+ */
+async function promptGenerateInput(
+  stage: StageName,
+  workspaceRoot: string,
+): Promise<{ description?: string; fromFile?: string } | undefined> {
+  type SeedPick = vscode.QuickPickItem & { mode: "text" | "file" };
+  const items: SeedPick[] = [
+    {
+      label: "$(edit) Enter a description",
+      detail: "Type a short feature description",
+      mode: "text",
+    },
+    {
+      label: "$(file) Use a file",
+      detail: "Pass a description document via --from-file (good for long specs)",
+      mode: "file",
+    },
+  ];
+  const pick = await vscode.window.showQuickPick(items, {
+    placeHolder: `Seed for the ${stage} stage`,
+  });
+  if (!pick) {
+    return undefined;
+  }
+  if (pick.mode === "text") {
+    const description = await vscode.window.showInputBox({
+      prompt: `Description for the ${stage} stage`,
+      placeHolder: "What should this stage cover?",
+    });
+    return description === undefined ? undefined : { description };
+  }
+  const uris = await vscode.window.showOpenDialog({
+    canSelectMany: false,
+    defaultUri: vscode.Uri.file(workspaceRoot),
+    openLabel: "Use as description",
+    filters: { "Text/Markdown": ["md", "txt"], "All files": ["*"] },
+  });
+  return uris?.[0] ? { fromFile: uris[0].fsPath } : undefined;
+}
+
 export function registerCommands(context: vscode.ExtensionContext, deps: Deps): void {
   const { cfg, controller, output } = deps;
   const reg = (id: string, fn: (...a: unknown[]) => unknown) =>
@@ -94,17 +137,17 @@ export function registerCommands(context: vscode.ExtensionContext, deps: Deps): 
       return;
     }
     let description: string | undefined;
+    let fromFile: string | undefined;
     if (!regenerate) {
-      description = await vscode.window.showInputBox({
-        prompt: `Description for the ${stage} stage`,
-        placeHolder: "What should this stage cover?",
-      });
-      if (description === undefined) {
+      const input = await promptGenerateInput(stage, cfg.workspaceRoot);
+      if (!input) {
         return; // cancelled
       }
+      description = input.description;
+      fromFile = input.fromFile;
     }
     output.show();
-    await runAndReport(deps, ACTIONS.generate(stage, description), `Generate ${stage}`);
+    await runAndReport(deps, ACTIONS.generate(stage, description, fromFile), `Generate ${stage}`);
     await controller.refresh();
   };
 

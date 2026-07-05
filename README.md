@@ -35,7 +35,9 @@ Three TreeViews in a dedicated activity-bar container:
 | Run result | `run … --json-result` | `schemas/json-result.schema.json` |
 
 All writes/execution go through the CLI: `spec approve/reject/check`,
-`plan --gated --no-interactive`, `run`, and stop-via-SIGTERM.
+`plan --gated --no-interactive`, `run`, and stop-via-SIGTERM. Generate asks
+for its seed as a typed one-liner or a file (passed via `--from-file` — the
+right channel for long descriptions).
 
 ## Requirements
 

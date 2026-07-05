@@ -58,6 +58,18 @@ describe("ACTIONS argv mapping", () => {
       "--no-interactive",
       "make it good",
     ]);
+    expect(ACTIONS.generate("requirements", undefined, "/tmp/idea.md")).toEqual([
+      "plan",
+      "--gated",
+      "--stage",
+      "requirements",
+      "--no-interactive",
+      "--from-file",
+      "/tmp/idea.md",
+    ]);
+    // A file wins over a typed description — they are mutually exclusive on the CLI.
+    expect(ACTIONS.generate("design", "typed", "/tmp/idea.md")).toContain("--from-file");
+    expect(ACTIONS.generate("design", "typed", "/tmp/idea.md")).not.toContain("typed");
   });
 });
 

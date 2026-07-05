@@ -7,6 +7,7 @@ import { parse as parseYaml } from "yaml";
 import * as vscode from "vscode";
 
 import type { CliInvocation } from "./cli";
+import { parseGovernance } from "./specState";
 
 export interface ResolvedConfig {
   workspaceRoot: string;
@@ -72,9 +73,7 @@ export function resolveConfig(folder: vscode.WorkspaceFolder): ResolvedConfig {
   const pathSetting = settings.get<string>("path")?.trim() ?? "";
   const bin = pathSetting ? { ...splitCommand(pathSetting), found: true } : detectBinary(workspaceRoot);
 
-  const governanceRaw = cfg?.spec_governance;
-  const governance =
-    governanceRaw === "strict" ? "strict" : governanceRaw === "off" ? "off" : null;
+  const governance = parseGovernance(cfg?.spec_governance);
 
   return {
     workspaceRoot,
