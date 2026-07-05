@@ -108,6 +108,9 @@
     "pretest:integration": "npm run build && npm run compile-integration",
     "test:integration": "vscode-test"
   },
+  "overrides": {
+    "serialize-javascript": "^7.0.5"
+  },
   "devDependencies": {
     "@types/mocha": "^10.0.7",
     "@types/node": "^22.0.0",
