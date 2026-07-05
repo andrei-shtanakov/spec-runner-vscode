@@ -72,6 +72,23 @@ describe("parseJsonResult against vendored schemas", () => {
     const r = parseJsonResult(raw, validateCosts);
     expect(r.ok).toBe(true);
   });
+  it("accepts the empty costs payload from a fresh gated spec (no tasks.md)", () => {
+    // spec-runner ≥ 2.8.1: `costs --json` on a project whose tasks stage isn't
+    // generated yet emits this instead of the "No tasks found" prose. Guards
+    // vendored-schema drift against that contract.
+    const empty = {
+      tasks: [],
+      summary: {
+        total_cost: 0.0,
+        total_input_tokens: 0,
+        total_output_tokens: 0,
+        avg_cost_per_completed: 0.0,
+        most_expensive_task: null,
+      },
+    };
+    const r = parseJsonResult(JSON.stringify(empty), validateCosts);
+    expect(r.ok).toBe(true);
+  });
   it("rejects malformed JSON", () => {
     const r = parseJsonResult("{not json", validateStatus);
     expect(r.ok).toBe(false);
@@ -91,6 +108,23 @@ describe("SpecRunnerCli spawn plumbing", () => {
     const r = await cli.run(["-e", "process.stdout.write('ok')"]);
     expect(r.code).toBe(0);
     expect(r.stdout).toBe("ok");
+  });
+
+  it("run() keeps stdout parseable when the CLI logs to stderr", async () => {
+    // spec-runner in a git-subdir project emits a structlog warning
+    // (subdir_project_detected) before the JSON. Since 2.8.1 it goes to
+    // stderr; the read path must parse stdout alone and never mix streams.
+    const cli = new SpecRunnerCli(inv);
+    const r = await cli.run([
+      "-e",
+      "process.stderr.write('[warning  ] subdir_project_detected\\n');" +
+        "process.stdout.write(JSON.stringify({total_tasks:0,completed:0," +
+        "failed:0,running:0,not_started:0,total_cost:0,input_tokens:0," +
+        "output_tokens:0,budget_usd:null}))",
+    ]);
+    const parsed = parseJsonResult(r.stdout, validateStatus);
+    expect(parsed.ok).toBe(true);
+    expect(r.stderr).toContain("subdir_project_detected");
   });
 
   it("runStreaming() splits stderr into lines", async () => {

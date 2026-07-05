@@ -40,12 +40,14 @@ export function checkAgainst<T>(
 
 /**
  * The minimum spec-runner version this extension's vendored contract targets.
- * Provisional (option 1): pinned to the release that will carry the
- * status/costs/spec-frontmatter schemas. Below this the extension degrades to
- * read-only unless `spec-runner.ignoreVersionPin` is set.
+ * 2.8.1 is the first release where the machine-JSON surfaces are safe for this
+ * extension: `--json` stdout stays log-free (pre-init structlog → stderr) and
+ * `costs --json` emits a valid empty payload on a project without tasks.md.
+ * Below this the extension degrades to read-only unless
+ * `spec-runner.ignoreVersionPin` is set.
  */
 export function minSpecRunnerVersion(): string {
-  return "2.8.0";
+  return "2.8.1";
 }
 
 /** Read a vendored schema's raw JSON (used by tests / diagnostics). */

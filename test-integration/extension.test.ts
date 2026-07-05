@@ -84,6 +84,36 @@ describe("spec-runner extension (integration)", () => {
     assert.strictEqual(String(budget?.description), "$0.50 / $5.00");
   });
 
+  it("refresh survives CLI log noise on stderr (git-subdir warning)", async () => {
+    // The fake CLI (like spec-runner ≥ 2.8.1 in a git-subdir project) prints a
+    // structlog warning to stderr before every status/costs JSON. Regression
+    // for the 2.8.0 leak where that warning landed on stdout and broke
+    // JSON.parse, freezing all three trees.
+    await api.controller.refresh();
+    assert.strictEqual(api.controller.state.tasks.length, 2, "tasks parsed despite stderr noise");
+    assert.ok(api.controller.state.summary, "summary parsed despite stderr noise");
+  });
+
+  it("renders an empty Tasks tree from the empty `costs --json` payload", async function () {
+    this.timeout(10000);
+    // Fresh gated spec: requirements/design exist but tasks.md isn't generated
+    // yet. spec-runner ≥ 2.8.1 answers `costs --json` with {"tasks": [], ...}
+    // (2.8.0 printed "No tasks found" prose). The tree must show the info
+    // placeholder, not an error or a stale list.
+    const modeFlag = path.join(workspaceRoot(), "bin", "mode-empty-costs");
+    fs.writeFileSync(modeFlag, "");
+    try {
+      await api.controller.refresh();
+      assert.deepStrictEqual(api.controller.state.tasks, []);
+      const labels = labelsOf(api.trees.tasks.getChildren());
+      assert.deepStrictEqual(labels, ["No tasks"], labels.join(", "));
+    } finally {
+      fs.rmSync(modeFlag, { force: true });
+    }
+    await api.controller.refresh();
+    assert.strictEqual(api.controller.state.tasks.length, 2, "state restored after mode reset");
+  });
+
   it("dispatches `run --task <id> --json-result` on Run task", async () => {
     clearCalls();
     await vscode.commands.executeCommand("specRunner.runTask", { task: { id: "TASK-001" } });

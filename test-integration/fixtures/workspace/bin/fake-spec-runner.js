@@ -28,11 +28,28 @@ function print(obj) {
 const cmd = args[0];
 
 if (argv.includes("--version")) {
-  process.stdout.write("spec-runner 2.8.0\n");
+  process.stdout.write("spec-runner 2.8.1\n");
   process.exit(0);
 }
 
+// Mirror spec-runner ≥ 2.8.1 in a git-subdir project: a structlog warning is
+// emitted during config build, on *stderr* — stdout stays pure JSON. Always on,
+// so every read-path test doubles as a regression test for stream separation.
+function warnLikeRealCli() {
+  process.stderr.write(
+    "2026-07-05 09:00:00 [warning  ] subdir_project_detected module=config\n",
+  );
+}
+
+// Empty-project mode (fresh gated spec, no tasks.md yet): tests toggle it by
+// creating bin/mode-empty-costs. `costs --json` then returns the valid empty
+// payload spec-runner ≥ 2.8.1 emits instead of the "No tasks found" prose.
+function emptyCostsMode() {
+  return fs.existsSync(path.join(__dirname, "mode-empty-costs"));
+}
+
 if (cmd === "status" && args.includes("--json")) {
+  warnLikeRealCli();
   print({
     total_tasks: 2,
     completed: 1,
@@ -48,6 +65,20 @@ if (cmd === "status" && args.includes("--json")) {
 }
 
 if (cmd === "costs" && args.includes("--json")) {
+  warnLikeRealCli();
+  if (emptyCostsMode()) {
+    print({
+      tasks: [],
+      summary: {
+        total_cost: 0.0,
+        total_input_tokens: 0,
+        total_output_tokens: 0,
+        avg_cost_per_completed: 0.0,
+        most_expensive_task: null,
+      },
+    });
+    process.exit(0);
+  }
   print({
     tasks: [
       {

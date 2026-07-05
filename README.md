@@ -39,9 +39,11 @@ All writes/execution go through the CLI: `spec approve/reject/check`,
 
 ## Requirements
 
-- **spec-runner ≥ 2.8.0** installed separately (this extension does not bundle
+- **spec-runner ≥ 2.8.1** installed separately (this extension does not bundle
   it). The vendored schemas + a `--version` check on activation are the pinned
-  contract; below the pin the extension degrades to read-only. For local
+  contract; below the pin the extension degrades to read-only. 2.8.1 is the
+  first release whose `--json` stdout is guaranteed log-free and whose
+  `costs --json` stays valid JSON on a project without tasks.md. For local
   development against an unreleased spec-runner, set
   `spec-runner.ignoreVersionPin`.
 
