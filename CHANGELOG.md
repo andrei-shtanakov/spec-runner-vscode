@@ -17,6 +17,10 @@ Initial scaffold — a thin read-model + action-dispatcher over spec-runner's CL
   release with log-free `--json` stdout and a valid empty `costs --json`
   payload); read-only degradation when the binary is missing or below the pin.
 - Config-resolved binary/state-DB/spec-prefix/governance (honors custom paths).
+  Absent `spec_governance` (or a missing config file) renders as `off` —
+  spec-runner's default — instead of `unknown`.
+- Generate accepts its seed from a file via `plan --from-file` (QuickPick:
+  typed description or file dialog), matching the CLI's two input channels.
 - Unit tests for the vscode-free core (cli argv/parse, frontmatter reader,
   status normalization, schema validation).
 - Integration tests (`@vscode/test-electron`) driving a real extension host

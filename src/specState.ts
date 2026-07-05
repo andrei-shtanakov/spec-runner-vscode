@@ -11,6 +11,19 @@ import type { StageInfo, StageName } from "./types";
 
 export const STAGES: StageName[] = ["requirements", "design", "tasks"];
 
+/**
+ * Map a raw `spec_governance` config value to the tree's vocabulary.
+ * spec-runner defaults to "off" when the key (or the whole config file) is
+ * absent, so mirror that instead of reporting "unknown". null ("unknown") is
+ * reserved for a present but unrecognized value.
+ */
+export function parseGovernance(raw: unknown): "strict" | "off" | null {
+  if (raw === "strict") {
+    return "strict";
+  }
+  return raw === "off" || raw === undefined || raw === null ? "off" : null;
+}
+
 const FM_DELIM = "---";
 
 /** Split a leading `---\n...\n---` YAML block from a document. */

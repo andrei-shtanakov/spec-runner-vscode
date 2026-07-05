@@ -3,7 +3,7 @@ import * as os from "os";
 import * as path from "path";
 import { afterAll, describe, expect, it } from "vitest";
 
-import { readStage, splitFrontmatter, stageFileName } from "../src/specState";
+import { parseGovernance, readStage, splitFrontmatter, stageFileName } from "../src/specState";
 
 const FIX = path.join(__dirname, "fixtures");
 
@@ -15,6 +15,21 @@ describe("splitFrontmatter", () => {
   });
   it("returns null without frontmatter", () => {
     expect(splitFrontmatter("# just a heading\n")).toBeNull();
+  });
+});
+
+describe("parseGovernance", () => {
+  it("passes through the two explicit modes", () => {
+    expect(parseGovernance("strict")).toBe("strict");
+    expect(parseGovernance("off")).toBe("off");
+  });
+  it("mirrors spec-runner's default (off) when the key or config file is absent", () => {
+    expect(parseGovernance(undefined)).toBe("off");
+    expect(parseGovernance(null)).toBe("off");
+  });
+  it("keeps null (rendered as 'unknown') for an unrecognized value", () => {
+    expect(parseGovernance("Strict")).toBeNull();
+    expect(parseGovernance(42)).toBeNull();
   });
 });
 

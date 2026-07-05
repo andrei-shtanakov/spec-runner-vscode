@@ -46,13 +46,15 @@ export const ACTIONS = {
   approve: (stage: string): string[] => ["spec", "approve", stage],
   reject: (stage: string): string[] => ["spec", "reject", stage],
   check: (stage: string): string[] => ["spec", "check", stage],
-  generate: (stage: string, description?: string): string[] => [
+  generate: (stage: string, description?: string, fromFile?: string): string[] => [
     "plan",
     "--gated",
     "--stage",
     stage,
     "--no-interactive",
-    ...(description ? [description] : []),
+    // `--from-file` and the positional description are mutually exclusive on
+    // the CLI; when a file is given it wins.
+    ...(fromFile ? ["--from-file", fromFile] : description ? [description] : []),
   ],
   runTask: (id: string): string[] => ["run", "--task", id, "--json-result"],
   runAll: (): string[] => ["run", "--all", "--json-result"],
