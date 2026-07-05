@@ -13,9 +13,13 @@ export const STAGES: StageName[] = ["requirements", "design", "tasks"];
 
 /**
  * Map a raw `spec_governance` config value to the tree's vocabulary.
- * spec-runner defaults to "off" when the key (or the whole config file) is
- * absent, so mirror that instead of reporting "unknown". null ("unknown") is
- * reserved for a present but unrecognized value.
+ *
+ * Absent key, missing config file, and YAML-null (`spec_governance:` with no
+ * value) all resolve to "off" — exactly what spec-runner does: its Python side
+ * reads the key via `dict.get()`, so all three arrive as None and fall through
+ * to the `spec_governance = "off"` default. A null *return* (rendered as
+ * "unknown") is reserved for a value that is present but unrecognized, e.g. a
+ * typo like `Strict`.
  */
 export function parseGovernance(raw: unknown): "strict" | "off" | null {
   if (raw === "strict") {
