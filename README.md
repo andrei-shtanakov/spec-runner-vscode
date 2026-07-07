@@ -19,7 +19,8 @@ Three TreeViews in a dedicated activity-bar container:
 
 - **Spec** — per-stage governance (draft/approved/stale + version + validation),
   with context-sensitive Approve / Reject / Regenerate / Generate / Edit buttons.
-  Root shows `governance: strict|off`.
+  Root shows the `governance:` mode — `strict`, `off` (the default when unset),
+  or `unknown` for an unrecognized value.
 - **Tasks** — task list from `costs --json` (status normalized from spec-runner's
   mixed vocabulary), with Run / Logs and a section-level Run all / Stop.
 - **Run** — active task, advisory current stage, and authoritative
