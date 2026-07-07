@@ -71,7 +71,7 @@
         "spec-runner.path": {
           "type": "string",
           "default": "",
-          "description": "Path or command for the spec-runner binary. Empty = auto-detect (.venv/bin/spec-runner, `uv run spec-runner`, or `spec-runner` on PATH). May include args, e.g. `uv run spec-runner`."
+          "description": "Path or command for the spec-runner binary. Empty = auto-detect (.venv/bin/spec-runner, else `spec-runner` on PATH). May include args, e.g. `uv run spec-runner`."
         },
         "spec-runner.specPrefix": {
           "type": "string",
