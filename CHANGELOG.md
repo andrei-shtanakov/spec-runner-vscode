@@ -31,5 +31,6 @@ Initial scaffold — a thin read-model + action-dispatcher over spec-runner's CL
   `costs --json` payload (fresh gated spec, no tasks.md) renders the "No tasks"
   placeholder. The fake CLI now always logs to stderr like the real one.
 
-Pins spec-runner's `status.schema.json`, `costs.schema.json`, and
-`spec-frontmatter.schema.json` (published in the spec-runner contract PR).
+Pins spec-runner's `status.schema.json`, `costs.schema.json`,
+`spec-frontmatter.schema.json`, and `json-result.schema.json` (published in the
+spec-runner contract PR).
