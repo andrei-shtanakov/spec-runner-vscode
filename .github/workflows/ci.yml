@@ -39,14 +39,23 @@ jobs:
         run: npm test
 
       # vscode-test downloads a full VS Code build (~315 MB) on a cache miss. The version is
-      # resolved at run time rather than pinned, so the key carries no version and a stale
-      # entry is simply ignored by the downloader.
+      # resolved from the update server at run time rather than pinned, so no value in the
+      # repo tracks it: keying on the lockfile would refresh the entry on dependency bumps,
+      # which is uncorrelated with VS Code releases. Rotate the key monthly instead, matching
+      # the stable release cadence. actions/cache skips the upload on an exact-key hit, so a
+      # constant key would pin the cache to whatever VS Code shipped first and never refresh;
+      # the month suffix bounds that staleness, and the prefix restore-key keeps runs warm
+      # from the previous month in the meantime.
+      - name: Compute VS Code cache key
+        id: vscode-cache-key
+        run: echo "month=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+
       - name: Cache VS Code test build
         uses: actions/cache@v4
         with:
           path: .vscode-test
-          key: vscode-test-${{ runner.os }}
-          restore-keys: vscode-test-${{ runner.os }}
+          key: vscode-test-${{ runner.os }}-${{ steps.vscode-cache-key.outputs.month }}
+          restore-keys: vscode-test-${{ runner.os }}-
 
       # The integration suite launches a real VS Code, i.e. Electron, which needs a display;
       # xvfb-run supplies a virtual one on the headless runner.
