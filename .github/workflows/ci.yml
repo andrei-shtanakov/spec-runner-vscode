@@ -1,0 +1,63 @@
+# Build/test gate. Complements governance.yml, which validates repo invariants but runs
+# neither the compiler nor the test suites: before this workflow, dependency PRs (#11-#13)
+# reported CLEAN without `tsc`, `vitest` or `vscode-test` ever executing.
+name: ci
+permissions:
+  contents: read          # checkout only; least-privilege, as in governance.yml
+on:
+  pull_request:
+  push:
+    branches: [master]    # catch a broken merge result, not just the pre-merge branch
+  workflow_dispatch:
+
+# A new push supersedes the previous run on the same ref; master is exempt so every
+# merged commit keeps its own recorded result.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"    # matches the @types/node ^22 the sources compile against
+          cache: npm
+
+      - run: npm ci
+
+      - name: Type-check
+        run: npm run check-types
+
+      - name: Build extension bundle
+        run: npm run build
+
+      - name: Unit tests
+        run: npm test
+
+      # vscode-test downloads a full VS Code build (~315 MB) on a cache miss. The version is
+      # resolved from the update server at run time rather than pinned, so no value in the
+      # repo tracks it: keying on the lockfile would refresh the entry on dependency bumps,
+      # which is uncorrelated with VS Code releases. Rotate the key monthly instead, matching
+      # the stable release cadence. actions/cache skips the upload on an exact-key hit, so a
+      # constant key would pin the cache to whatever VS Code shipped first and never refresh;
+      # the month suffix bounds that staleness, and the prefix restore-key keeps runs warm
+      # from the previous month in the meantime.
+      - name: Compute VS Code cache key
+        id: vscode-cache-key
+        run: echo "month=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache VS Code test build
+        uses: actions/cache@v4
+        with:
+          path: .vscode-test
+          key: vscode-test-${{ runner.os }}-${{ steps.vscode-cache-key.outputs.month }}
+          restore-keys: vscode-test-${{ runner.os }}-
+
+      # The integration suite launches a real VS Code, i.e. Electron, which needs a display;
+      # xvfb-run supplies a virtual one on the headless runner.
+      - name: Integration tests
+        run: xvfb-run -a npm run test:integration
