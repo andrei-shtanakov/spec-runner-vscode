@@ -116,7 +116,7 @@
     "@types/node": "^22.0.0",
     "@types/semver": "^7.5.8",
     "@types/vscode": "^1.90.0",
-    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^2.4.1",
     "esbuild": "^0.28.1",
     "typescript": "^5.6.0",
