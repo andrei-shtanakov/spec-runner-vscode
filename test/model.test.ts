@@ -16,6 +16,7 @@ describe("normalizeStatus", () => {
     ["in_progress", "in_progress"],
     ["done", "done"],
     ["blocked", "blocked"],
+    ["review", "in_progress"],
     ["pending", "todo"],
     ["running", "in_progress"],
     ["success", "done"],

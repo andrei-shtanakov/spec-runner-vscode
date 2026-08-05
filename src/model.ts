@@ -17,6 +17,11 @@ export function normalizeStatus(raw: string): CanonicalStatus {
     case "done":
     case "blocked":
       return raw;
+    // tasks.md intermediate status (spec-runner ≥2.14.0, #16): gates passed,
+    // code review still running — still in progress from the tree's point of
+    // view; the raw status stays visible via rawStatus.
+    case "review":
+      return "in_progress";
     // DB vocabulary (spec_runner.state.TaskState)
     case "pending":
       return "todo";

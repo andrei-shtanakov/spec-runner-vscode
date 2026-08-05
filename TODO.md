@@ -43,6 +43,13 @@
   через `.vsix` с `--force` (версия во время разработки не двигается).
 - ⚠️ **`spec-runner.specPrefix` не работает** — см. чекбокс ниже.
 
+- ✅ **`review`-статус принят и поддержан** (issue #16, slug `revendor-review-status`,
+  2026-08-05): spec-runner v2.14.0 добавил промежуточный tasks.md-статус `review` (🔍 —
+  гейты пройдены, идёт code review). `costs.schema.json` ре-вендорена (enum +`review`),
+  `normalizeStatus` мапит его в `in_progress` (rawStatus сохраняется). До этого статус
+  fail-soft показывался как `unknown`. Пин `minSpecRunnerVersion` не тронут — изменение
+  аддитивное, старые spec-runner просто не эмитят новый статус.
+
 ## Правила ведения
 
 - После выполненной задачи — `[x]` и хеш коммита.
