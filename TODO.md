@@ -7,7 +7,7 @@
 > Реестр: `../prograph-vault/authored/registry/registry.md`
 >
 > Открытые пункты размечены инлайн-тегами `@owner:` / `@blocked_by:` / `@trigger:` по
-> plan-fields v2. Для `@owner` каноничны `github:<login>`,
+> plan-fields v2. Для `@owner:` каноничны `github:<login>`,
 > `github-team:<org>/<team>`, `repo:<manifest-key>` и `TBD`; bare handle/role — legacy.
 > Теги опциональны и исключены из ключа идентичности пункта в Robin (robin-runtime#27);
 > отсутствие тега значит «неизвестно» — выдумывать значение не надо.
