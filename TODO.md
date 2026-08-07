@@ -7,7 +7,8 @@
 > Реестр: `../prograph-vault/authored/registry/registry.md`
 >
 > Открытые пункты размечены инлайн-тегами `@owner:` / `@blocked_by:` / `@trigger:` по
-> формату из `../_cowork_output/2026-07-26-plan-fields-and-todo-coverage-handoff.md` §3.
+> plan-fields v2. Для `@owner:` каноничны `github:<login>`,
+> `github-team:<org>/<team>`, `repo:<manifest-key>` и `TBD`; bare handle/role — legacy.
 > Теги опциональны и исключены из ключа идентичности пункта в Robin (robin-runtime#27);
 > отсутствие тега значит «неизвестно» — выдумывать значение не надо.
 >
@@ -60,7 +61,8 @@
 - Пункты уровня команды и кросс-проектные — сюда. Микрошаги реализации сюда не кладём:
   каталога планов в репо нет (в отличие от `../spec-runner` с его `docs/plans/`) — объём
   работ такого не требует, детали живут в описании PR и в коде.
-- Инлайн-теги `@owner:` / `@blocked_by:` / `@trigger:` — формат из handoff §3, все опциональны.
+- Инлайн-теги `@owner:` / `@blocked_by:` / `@trigger:` используют plan-fields v2;
+  все опциональны.
 
 ---
 
@@ -68,7 +70,7 @@
 
 ### Контракт с spec-runner
 
-- [ ] `spec-runner.specPrefix` не доходит до CLI — настройка сейчас мертва @owner:andrei @blocked_by:spec-runner#spec-prefix-swallow
+- [ ] `spec-runner.specPrefix` не доходит до CLI — настройка сейчас мертва @owner:github:andrei-shtanakov @blocked_by:spec-runner#spec-prefix-swallow
 
   Проверено 2026-07-26 на установленном spec-runner 2.9.0: `--spec-prefix` объявлен и на
   top-level парсере, и в parent-парсере `common`, поэтому субпарсер затирает значение
@@ -84,7 +86,7 @@
   отнаследовано от `common` и флага не имеет вообще, поэтому простой перенос флага
   за субкоманду сломает gated-действия. Ждём фикс в spec-runner, там пункт заведён.
 
-- [ ] Пересмотреть `minSpecRunnerVersion` (сейчас 2.8.1), когда 2.10.0 реально появится на PyPI @owner:andrei @blocked_by:spec-runner#tag-v2.10.0 @trigger:"2.10.0 опубликован и содержит изменения read-поверхностей"
+- [ ] Пересмотреть `minSpecRunnerVersion` (сейчас 2.8.1), когда 2.10.0 реально появится на PyPI @owner:github:andrei-shtanakov @blocked_by:spec-runner#tag-v2.10.0 @trigger:"2.10.0 опубликован и содержит изменения read-поверхностей"
 
   У spec-runner код и CHANGELOG 2.10.0 в master (`a24aba5`), но тега нет, а `publish.yml`
   триггерится только по `on.push.tags`, поэтому `pip install spec-runner` даёт 2.9.0.
@@ -92,12 +94,12 @@
 
 ### CI и поставка
 
-- [ ] Сделать job `test` обязательным чеком в branch protection для `master` @owner:andrei
+- [ ] Сделать job `test` обязательным чеком в branch protection для `master` @owner:github:andrei-shtanakov
 
   Воркфлоу сам по себе мерж не блокирует: красный CI сейчас лишь виден. Правится в
   Settings → Branches, кодом не закрывается.
 
-- [ ] Решить, публикуется ли расширение в Marketplace @owner:andrei
+- [ ] Решить, публикуется ли расширение в Marketplace @owner:github:andrei-shtanakov
 
   Сейчас `0.1.0 — unreleased`, `publisher` в манифесте есть, установка руками через
   `.vsix --force` + Reload Window. Если публикация не планируется — зафиксировать это
