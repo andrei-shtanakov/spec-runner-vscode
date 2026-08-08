@@ -6,8 +6,8 @@
 > Стратегический контекст: `../prograph-vault/authored/notes/ecosystem-roadmap.md`
 > Реестр: `../prograph-vault/authored/registry/registry.md`
 >
-> Открытые пункты размечены инлайн-тегами `@owner:` / `@blocked_by:` / `@trigger:` по
-> plan-fields v2. Для `@owner:` каноничны `github:<login>`,
+> Открытые пункты размечены инлайн-тегами `@owner:` / `@blocked_by:` / `@trigger:` /
+> `@id:` по plan-fields v2. Для `@owner:` каноничны `github:<login>`,
 > `github-team:<org>/<team>`, `repo:<manifest-key>` и `TBD`; bare handle/role — legacy.
 > Теги опциональны и исключены из ключа идентичности пункта в Robin (robin-runtime#27);
 > отсутствие тега значит «неизвестно» — выдумывать значение не надо.
@@ -104,8 +104,7 @@
   (`4ef5787`, spec-runner #93), а smoke на 2.21.0 подтвердил вызов расширения без
   локального workaround.
 - [x] Пересмотрен `minSpecRunnerVersion` после публикации 2.10.0 (`58b4002`) @owner:github:andrei-shtanakov @id:min-spec-runner-version-review
-  Релиз
-  добавил opt-in lifecycle-команды, но не изменил потребляемые `status` / `costs` /
+  Релиз добавил opt-in lifecycle-команды, но не изменил потребляемые `status` / `costs` /
   `json-result` контракты; минимальный пин остаётся 2.8.1, как требует правило
   «не бампать ради свежести».
 
