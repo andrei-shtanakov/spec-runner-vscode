@@ -6,8 +6,8 @@
 > Стратегический контекст: `../prograph-vault/authored/notes/ecosystem-roadmap.md`
 > Реестр: `../prograph-vault/authored/registry/registry.md`
 >
-> Открытые пункты размечены инлайн-тегами `@owner:` / `@blocked_by:` / `@trigger:` по
-> plan-fields v2. Для `@owner:` каноничны `github:<login>`,
+> Открытые пункты размечены инлайн-тегами `@owner:` / `@blocked_by:` / `@trigger:` /
+> `@id:` по plan-fields v2. Для `@owner:` каноничны `github:<login>`,
 > `github-team:<org>/<team>`, `repo:<manifest-key>` и `TBD`; bare handle/role — legacy.
 > Теги опциональны и исключены из ключа идентичности пункта в Robin (robin-runtime#27);
 > отсутствие тега значит «неизвестно» — выдумывать значение не надо.
@@ -42,7 +42,9 @@
   подряд отчитались `CLEAN`, ни разу не запустив компилятор.
 - 🚧 **Версия 0.1.0 не публиковалась**: в Marketplace расширения нет, ставится вручную
   через `.vsix` с `--force` (версия во время разработки не двигается).
-- ⚠️ **`spec-runner.specPrefix` не работает** — см. чекбокс ниже.
+- ✅ **`spec-runner.specPrefix` работает без обхода в расширении**: upstream-фикс
+  spec-runner `4ef5787` (#93) сохраняет common-флаг перед субкомандой; живой smoke на
+  2.21.0 подтвердил текущий порядок `buildArgs`.
 
 - ✅ **`review`-статус принят и поддержан** (issue #16, slug `revendor-review-status`,
   2026-08-05): spec-runner v2.14.0 добавил промежуточный tasks.md-статус `review` (🔍 —
@@ -61,62 +63,52 @@
 - Пункты уровня команды и кросс-проектные — сюда. Микрошаги реализации сюда не кладём:
   каталога планов в репо нет (в отличие от `../spec-runner` с его `docs/plans/`) — объём
   работ такого не требует, детали живут в описании PR и в коде.
-- Инлайн-теги `@owner:` / `@blocked_by:` / `@trigger:` используют plan-fields v2;
-  все опциональны.
+- Инлайн-теги `@owner:` / `@blocked_by:` / `@trigger:` / `@id:` используют plan-fields v2;
+  все опциональны. Значение `@id` — стабильный локальный идентификатор пункта,
+  уникальный внутри репозитория; полный кросс-репный адрес имеет вид
+  `todo://spec-runner-vscode/<id>`.
 
 ---
 
 ## Активные задачи
 
-### Контракт с spec-runner
-
-- [ ] `spec-runner.specPrefix` не доходит до CLI — настройка сейчас мертва @owner:github:andrei-shtanakov @blocked_by:spec-runner#spec-prefix-swallow
-
-  Проверено 2026-07-26 на установленном spec-runner 2.9.0: `--spec-prefix` объявлен и на
-  top-level парсере, и в parent-парсере `common`, поэтому субпарсер затирает значение
-  своим `default=""`. `buildArgs` (`src/cli.ts:33`) ставит флаг **перед** субкомандой —
-  ровно тот порядок, который проглатывается:
-
-  | argv | `spec_prefix` |
-  |---|---|
-  | `--spec-prefix=phase2- run` (наш порядок) | `''` |
-  | `run --spec-prefix=phase2-` | `'phase2-'` |
-
-  Односторонне у себя не чинится: семейство `spec` (`approve`/`reject`/`check`) не
-  отнаследовано от `common` и флага не имеет вообще, поэтому простой перенос флага
-  за субкоманду сломает gated-действия. Ждём фикс в spec-runner, там пункт заведён.
-
-- [ ] Пересмотреть `minSpecRunnerVersion` (сейчас 2.8.1), когда 2.10.0 реально появится на PyPI @owner:github:andrei-shtanakov @blocked_by:spec-runner#tag-v2.10.0 @trigger:"2.10.0 опубликован и содержит изменения read-поверхностей"
-
-  У spec-runner код и CHANGELOG 2.10.0 в master (`a24aba5`), но тега нет, а `publish.yml`
-  триггерится только по `on.push.tags`, поэтому `pip install spec-runner` даёт 2.9.0.
-  Пока так — пин честен и трогать его незачем.
-
 ### CI и поставка
 
-- [ ] Сделать job `test` обязательным чеком в branch protection для `master` @owner:github:andrei-shtanakov
+- [ ] Сделать job `test` обязательным чеком в branch protection для `master` @owner:github:andrei-shtanakov @id:branch-protection-required-test
 
   Воркфлоу сам по себе мерж не блокирует: красный CI сейчас лишь виден. Правится в
   Settings → Branches, кодом не закрывается.
 
-- [ ] Решить, публикуется ли расширение в Marketplace @owner:github:andrei-shtanakov
+- [ ] Решить, публикуется ли расширение в Marketplace @owner:github:andrei-shtanakov @id:marketplace-publication-decision
 
   Сейчас `0.1.0 — unreleased`, `publisher` в манифесте есть, установка руками через
   `.vsix --force` + Reload Window. Если публикация не планируется — зафиксировать это
   явно в README, чтобы `publisher` не читался как обещание.
 
-- [ ] Бампнуть `actions/checkout`, `actions/setup-node`, `actions/cache` на v5 @trigger:"GitHub опубликует v5 всех трёх"
+- [ ] Бампнуть `actions/checkout`, `actions/setup-node`, `actions/cache` на v5 @trigger:"GitHub опубликует v5 всех трёх" @id:github-actions-v5-upgrade
 
   Сейчас CI пишет annotation: экшены собраны под Node 20 и принудительно запускаются на
   Node 24. На результат не влияет, но шум в каждом прогоне.
 
 ### Зависимости
 
-- [ ] `brace-expansion` под `mocha` остаётся уязвим (GHSA-mh99-v99m-4gvg, high) @trigger:"выйдет релиз ветки 2.x выше 5.0.7-эквивалента"
+- [ ] `brace-expansion` под `mocha` остаётся уязвим (GHSA-mh99-v99m-4gvg, high) @trigger:"выйдет релиз ветки 2.x выше 5.0.7-эквивалента" @id:brace-expansion-advisory
 
   Диапазон адвизори `<=5.0.7` покрывает всю ветку 2.x, фикса для неё нет. Dev-only,
   в `dist/extension.js` не попадает (esbuild собирает с `external: ["vscode"]`).
   Предложение `npm audit fix` — даунгрейд `@vscode/test-cli` до 0.0.11 — применять не надо.
+
+---
+
+## Закрыто
+
+- [x] `spec-runner.specPrefix` не доходил до CLI: upstream исправил обе позиции флага @owner:github:andrei-shtanakov @id:spec-prefix-swallow
+  (`4ef5787`, spec-runner #93), а smoke на 2.21.0 подтвердил вызов расширения без
+  локального workaround.
+- [x] Пересмотрен `minSpecRunnerVersion` после публикации 2.10.0 (`58b4002`) @owner:github:andrei-shtanakov @id:min-spec-runner-version-review
+  Релиз добавил opt-in lifecycle-команды, но не изменил потребляемые `status` / `costs` /
+  `json-result` контракты; минимальный пин остаётся 2.8.1, как требует правило
+  «не бампать ради свежести».
 
 ---
 
