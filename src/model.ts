@@ -44,6 +44,8 @@ export interface CostsTask {
   status: string;
   cost: number;
   attempts: number;
+  /** Calls with unreported cost (spec-runner ≥2.29); absent before that. */
+  unmeasured_calls?: number;
 }
 
 export interface CostsPayload {
@@ -59,6 +61,7 @@ export function tasksFromCosts(payload: CostsPayload): TaskItem[] {
     rawStatus: t.status,
     cost: t.cost,
     attempts: t.attempts,
+    unmeasuredCalls: t.unmeasured_calls ?? 0,
   }));
 }
 

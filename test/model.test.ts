@@ -41,6 +41,25 @@ describe("tasksFromCosts", () => {
     expect(items[0]).toMatchObject({ id: "T1", status: "done", rawStatus: "success" });
     expect(items[1]).toMatchObject({ id: "T2", status: "todo", rawStatus: "todo" });
   });
+
+  it("carries unmeasured_calls through and defaults to 0 when absent", () => {
+    const payload: CostsPayload = {
+      tasks: [
+        {
+          task_id: "T1",
+          name: "a",
+          status: "success",
+          cost: 1,
+          attempts: 2,
+          unmeasured_calls: 3,
+        },
+        { task_id: "T2", name: "b", status: "todo", cost: 0, attempts: 0 },
+      ],
+    };
+    const items = tasksFromCosts(payload);
+    expect(items[0].unmeasuredCalls).toBe(3);
+    expect(items[1].unmeasuredCalls).toBe(0);
+  });
 });
 
 describe("summaryFromStatus", () => {
@@ -68,7 +87,14 @@ describe("summaryFromStatus", () => {
 
 describe("isRunnable", () => {
   it("is true for todo/in_progress only", () => {
-    const base = { id: "x", name: "n", rawStatus: "", cost: 0, attempts: 0 };
+    const base = {
+      id: "x",
+      name: "n",
+      rawStatus: "",
+      cost: 0,
+      unmeasuredCalls: 0,
+      attempts: 0,
+    };
     expect(isRunnable({ ...base, status: "todo" })).toBe(true);
     expect(isRunnable({ ...base, status: "in_progress" })).toBe(true);
     expect(isRunnable({ ...base, status: "done" })).toBe(false);
