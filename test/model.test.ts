@@ -42,7 +42,7 @@ describe("tasksFromCosts", () => {
     expect(items[1]).toMatchObject({ id: "T2", status: "todo", rawStatus: "todo" });
   });
 
-  it("carries unmeasured_calls through, defaulting to 0 when absent (<2.29)", () => {
+  it("carries unmeasured_calls through and defaults to 0 when absent", () => {
     const payload: CostsPayload = {
       tasks: [
         {

@@ -23,7 +23,7 @@ export class TaskTreeItem extends vscode.TreeItem {
     // CLI prints ≥$ for the same reason (spec-runner ≥2.29).
     const costPart =
       task.unmeasuredCalls > 0
-        ? ` · ≥$${task.cost.toFixed(2)} (${task.unmeasuredCalls} unmeasured)`
+        ? ` · ≥$${task.cost.toFixed(2)} (${task.unmeasuredCalls} unmeasured calls)`
         : task.cost
           ? ` · $${task.cost.toFixed(2)}`
           : "";

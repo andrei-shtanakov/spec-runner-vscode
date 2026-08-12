@@ -69,7 +69,7 @@ describe("spec-runner extension (integration)", () => {
     assert.strictEqual(t1?.unmeasuredCalls, 2);
     const t1Item = items.find((i) => String(i.label).includes("TASK-001"));
     assert.ok(
-      String(t1Item?.tooltip).includes("≥$0.50 (2 unmeasured)"),
+      String(t1Item?.tooltip).includes("≥$0.50 (2 unmeasured calls)"),
       String(t1Item?.tooltip),
     );
 
