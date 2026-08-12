@@ -19,10 +19,18 @@ export class TaskTreeItem extends vscode.TreeItem {
     this.description = task.rawStatus;
     this.iconPath = new vscode.ThemeIcon(STATUS_ICON[task.status]);
     this.contextValue = isRunnable(task) ? "task canRun" : "task";
+    // unmeasuredCalls > 0 → the recorded cost is a floor, not a total; the
+    // CLI prints ≥$ for the same reason (spec-runner ≥2.29).
+    const costPart =
+      task.unmeasuredCalls > 0
+        ? ` · ≥$${task.cost.toFixed(2)} (${task.unmeasuredCalls} unmeasured)`
+        : task.cost
+          ? ` · $${task.cost.toFixed(2)}`
+          : "";
     this.tooltip =
       `${task.id} — ${task.status}` +
       (task.rawStatus !== task.status ? ` (raw: ${task.rawStatus})` : "") +
-      (task.cost ? ` · $${task.cost.toFixed(2)}` : "");
+      costPart;
   }
 }
 

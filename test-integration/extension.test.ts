@@ -63,6 +63,16 @@ describe("spec-runner extension (integration)", () => {
     assert.strictEqual(t1?.status, "done", "success → done");
     assert.strictEqual(t1?.rawStatus, "success");
 
+    // spec-runner ≥ 2.29.0 contract: `unmeasured_calls` must survive the
+    // vendored-schema parse (a stale schema fails it and the tree stays
+    // empty), and a floor cost must render as ≥$ like the CLI does.
+    assert.strictEqual(t1?.unmeasuredCalls, 2);
+    const t1Item = items.find((i) => String(i.label).includes("TASK-001"));
+    assert.ok(
+      String(t1Item?.tooltip).includes("≥$0.50 (2 unmeasured)"),
+      String(t1Item?.tooltip),
+    );
+
     const t2Item = items.find((i) => String(i.label).includes("TASK-002"));
     assert.ok(String(t2Item?.contextValue).includes("canRun"), "todo task is runnable");
   });

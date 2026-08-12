@@ -67,6 +67,11 @@
         "output_tokens": {
           "description": "Total output tokens for this task",
           "type": "integer"
+        },
+        "unmeasured_calls": {
+          "description": "Agent calls recorded for this task whose cost the CLI never reported (timeout, account limit, or a CLI that reports no cost). Added 2.29.0. When > 0, `cost` is a floor, not a total. Absent in output from <2.29.0.",
+          "type": "integer",
+          "minimum": 0
         }
       }
     },
@@ -109,6 +114,11 @@
         "budget_used_pct": {
           "description": "Percentage of budget consumed; present only when a budget is set",
           "type": "number"
+        },
+        "unmeasured_calls": {
+          "description": "Agent calls across all tasks whose cost the CLI never reported. Added 2.29.0. When > 0, `total_cost` is a floor, not a total. Absent in output from <2.29.0.",
+          "type": "integer",
+          "minimum": 0
         }
       }
     }

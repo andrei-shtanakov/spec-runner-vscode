@@ -28,7 +28,7 @@ function print(obj) {
 const cmd = args[0];
 
 if (argv.includes("--version")) {
-  process.stdout.write("spec-runner 2.8.1\n");
+  process.stdout.write("spec-runner 2.29.0\n");
   process.exit(0);
 }
 
@@ -89,6 +89,9 @@ if (cmd === "costs" && args.includes("--json")) {
         attempts: 1,
         input_tokens: 1000,
         output_tokens: 500,
+        // spec-runner ≥ 2.29.0: calls whose cost the CLI never reported;
+        // cost above is a floor, not a total.
+        unmeasured_calls: 2,
       },
       {
         task_id: "TASK-002",
@@ -108,6 +111,7 @@ if (cmd === "costs" && args.includes("--json")) {
       most_expensive_task: "TASK-001",
       budget_usd: 5.0,
       budget_used_pct: 10.0,
+      unmeasured_calls: 2,
     },
   });
   process.exit(0);

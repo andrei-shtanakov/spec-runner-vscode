@@ -21,6 +21,8 @@ export interface TaskItem {
   /** Raw status string as spec-runner emitted it (mixed vocabulary). */
   rawStatus: string;
   cost: number;
+  /** When > 0, `cost` is a floor, not a total (calls with unreported cost). */
+  unmeasuredCalls: number;
   attempts: number;
 }
 

@@ -84,6 +84,18 @@ describe("parseJsonResult against vendored schemas", () => {
     const r = parseJsonResult(raw, validateCosts);
     expect(r.ok).toBe(true);
   });
+  it("accepts a ≥2.29 costs payload carrying optional unmeasured_calls", () => {
+    // spec-runner ≥ 2.29.0: tasks and summary may carry `unmeasured_calls`
+    // (agent calls whose cost the CLI never reported). Optional on both, so
+    // the same vendored schema keeps validating <2.29 output — pinned by the
+    // plain costs.sample.json test above.
+    const raw = fs.readFileSync(
+      path.join(FIX, "costs.unmeasured.sample.json"),
+      "utf8",
+    );
+    const r = parseJsonResult(raw, validateCosts);
+    expect(r.ok).toBe(true);
+  });
   it("accepts the empty costs payload from a fresh gated spec (no tasks.md)", () => {
     // spec-runner ≥ 2.8.1: `costs --json` on a project whose tasks stage isn't
     // generated yet emits this instead of the "No tasks found" prose. Guards
