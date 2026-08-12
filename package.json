@@ -12,7 +12,9 @@
   "engines": {
     "vscode": "^1.90.0"
   },
-  "categories": ["Other"],
+  "categories": [
+    "Other"
+  ],
   "activationEvents": [
     "workspaceContains:spec/tasks.md",
     "workspaceContains:spec/*.md",
@@ -31,38 +33,130 @@
     },
     "views": {
       "spec-runner": [
-        { "id": "specRunner.spec", "name": "Spec" },
-        { "id": "specRunner.tasks", "name": "Tasks" },
-        { "id": "specRunner.run", "name": "Run" }
+        {
+          "id": "specRunner.spec",
+          "name": "Spec"
+        },
+        {
+          "id": "specRunner.tasks",
+          "name": "Tasks"
+        },
+        {
+          "id": "specRunner.run",
+          "name": "Run"
+        }
       ]
     },
     "commands": [
-      { "command": "specRunner.refresh", "title": "spec-runner: Refresh", "icon": "$(refresh)" },
-      { "command": "specRunner.approve", "title": "Approve", "icon": "$(check)" },
-      { "command": "specRunner.reject", "title": "Reject", "icon": "$(discard)" },
-      { "command": "specRunner.generate", "title": "Generate", "icon": "$(sparkle)" },
-      { "command": "specRunner.regenerate", "title": "Regenerate", "icon": "$(sync)" },
-      { "command": "specRunner.edit", "title": "Edit", "icon": "$(edit)" },
-      { "command": "specRunner.generateNext", "title": "spec-runner: Generate next stage" },
-      { "command": "specRunner.runTask", "title": "Run task", "icon": "$(play)" },
-      { "command": "specRunner.runAll", "title": "Run all", "icon": "$(run-all)" },
-      { "command": "specRunner.stop", "title": "Stop", "icon": "$(stop)" },
-      { "command": "specRunner.logs", "title": "Logs", "icon": "$(output)" }
+      {
+        "command": "specRunner.refresh",
+        "title": "spec-runner: Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "specRunner.approve",
+        "title": "Approve",
+        "icon": "$(check)"
+      },
+      {
+        "command": "specRunner.reject",
+        "title": "Reject",
+        "icon": "$(discard)"
+      },
+      {
+        "command": "specRunner.generate",
+        "title": "Generate",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "specRunner.regenerate",
+        "title": "Regenerate",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "specRunner.edit",
+        "title": "Edit",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "specRunner.generateNext",
+        "title": "spec-runner: Generate next stage"
+      },
+      {
+        "command": "specRunner.runTask",
+        "title": "Run task",
+        "icon": "$(play)"
+      },
+      {
+        "command": "specRunner.runAll",
+        "title": "Run all",
+        "icon": "$(run-all)"
+      },
+      {
+        "command": "specRunner.stop",
+        "title": "Stop",
+        "icon": "$(stop)"
+      },
+      {
+        "command": "specRunner.logs",
+        "title": "Logs",
+        "icon": "$(output)"
+      }
     ],
     "menus": {
       "view/title": [
-        { "command": "specRunner.refresh", "when": "view == specRunner.spec", "group": "navigation" },
-        { "command": "specRunner.runAll", "when": "view == specRunner.tasks", "group": "navigation" },
-        { "command": "specRunner.stop", "when": "view == specRunner.tasks", "group": "navigation" }
+        {
+          "command": "specRunner.refresh",
+          "when": "view == specRunner.spec",
+          "group": "navigation"
+        },
+        {
+          "command": "specRunner.runAll",
+          "when": "view == specRunner.tasks",
+          "group": "navigation"
+        },
+        {
+          "command": "specRunner.stop",
+          "when": "view == specRunner.tasks",
+          "group": "navigation"
+        }
       ],
       "view/item/context": [
-        { "command": "specRunner.approve", "when": "view == specRunner.spec && viewItem =~ /canApprove/", "group": "inline@1" },
-        { "command": "specRunner.reject", "when": "view == specRunner.spec && viewItem =~ /canReject/", "group": "inline@2" },
-        { "command": "specRunner.regenerate", "when": "view == specRunner.spec && viewItem =~ /canRegenerate/", "group": "inline@3" },
-        { "command": "specRunner.generate", "when": "view == specRunner.spec && viewItem =~ /canGenerate/", "group": "inline@1" },
-        { "command": "specRunner.edit", "when": "view == specRunner.spec && viewItem =~ /canEdit/", "group": "inline@4" },
-        { "command": "specRunner.runTask", "when": "view == specRunner.tasks && viewItem =~ /canRun/", "group": "inline@1" },
-        { "command": "specRunner.logs", "when": "view == specRunner.tasks && viewItem =~ /task/", "group": "inline@2" }
+        {
+          "command": "specRunner.approve",
+          "when": "view == specRunner.spec && viewItem =~ /canApprove/",
+          "group": "inline@1"
+        },
+        {
+          "command": "specRunner.reject",
+          "when": "view == specRunner.spec && viewItem =~ /canReject/",
+          "group": "inline@2"
+        },
+        {
+          "command": "specRunner.regenerate",
+          "when": "view == specRunner.spec && viewItem =~ /canRegenerate/",
+          "group": "inline@3"
+        },
+        {
+          "command": "specRunner.generate",
+          "when": "view == specRunner.spec && viewItem =~ /canGenerate/",
+          "group": "inline@1"
+        },
+        {
+          "command": "specRunner.edit",
+          "when": "view == specRunner.spec && viewItem =~ /canEdit/",
+          "group": "inline@4"
+        },
+        {
+          "command": "specRunner.runTask",
+          "when": "view == specRunner.tasks && viewItem =~ /canRun/",
+          "group": "inline@1"
+        },
+        {
+          "command": "specRunner.logs",
+          "when": "view == specRunner.tasks && viewItem =~ /task/",
+          "group": "inline@2"
+        }
       ]
     },
     "configuration": {
@@ -117,7 +211,7 @@
     "@types/semver": "^7.5.8",
     "@types/vscode": "^1.90.0",
     "@vscode/test-cli": "^0.0.15",
-    "@vscode/test-electron": "^2.4.1",
+    "@vscode/test-electron": "^3.1.0",
     "esbuild": "^0.28.1",
     "typescript": "^5.6.0",
     "vitest": "^4.1.9"
