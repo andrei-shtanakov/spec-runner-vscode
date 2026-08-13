@@ -96,6 +96,19 @@ describe("parseJsonResult against vendored schemas", () => {
     const r = parseJsonResult(raw, validateCosts);
     expect(r.ok).toBe(true);
   });
+  it("accepts a ≥2.31 costs payload carrying the review-pr ledger", () => {
+    // spec-runner ≥ 2.31.0: a repo with `review-pr` spend adds a top-level
+    // `pr_reviews` array and four summary keys (pr_review_cost,
+    // pr_review_unmeasured_calls, repo_total_cost, pr_ledger_since). All
+    // optional — repos that never ran the loop emit exactly the pre-2.31
+    // shape, pinned by the plain costs.sample.json test above.
+    const raw = fs.readFileSync(
+      path.join(FIX, "costs.pr-reviews.sample.json"),
+      "utf8",
+    );
+    const r = parseJsonResult(raw, validateCosts);
+    expect(r.ok).toBe(true);
+  });
   it("accepts the empty costs payload from a fresh gated spec (no tasks.md)", () => {
     // spec-runner ≥ 2.8.1: `costs --json` on a project whose tasks stage isn't
     // generated yet emits this instead of the "No tasks found" prose. Guards

@@ -112,7 +112,28 @@ if (cmd === "costs" && args.includes("--json")) {
       budget_usd: 5.0,
       budget_used_pct: 10.0,
       unmeasured_calls: 2,
+      // spec-runner ≥ 2.31.0: review-pr ledger totals. Separate from
+      // total_cost (which stays the task total); present only when the
+      // repo has review-pr spend.
+      pr_review_cost: 0.75,
+      pr_review_unmeasured_calls: 1,
+      repo_total_cost: 1.25,
+      pr_ledger_since: "2.31.0",
     },
+    // spec-runner ≥ 2.31.0: per-PR rows from the review-pr ledger. A stale
+    // vendored schema rejects this whole payload and the TASKS tree stays
+    // empty — emitting it here keeps the integration suite reproducing that.
+    pr_reviews: [
+      {
+        repo: "andrei-shtanakov/spec-runner-vscode",
+        pr_number: 23,
+        calls: 4,
+        cost: 0.75,
+        unmeasured_calls: 1,
+        input_tokens: 2000,
+        output_tokens: 800,
+      },
+    ],
   });
   process.exit(0);
 }

@@ -1,0 +1,35 @@
+{
+  "tasks": [
+    {
+      "task_id": "TASK-001",
+      "name": "Login page",
+      "status": "success",
+      "cost": 0.5,
+      "attempts": 1,
+      "input_tokens": 1000,
+      "output_tokens": 500
+    }
+  ],
+  "summary": {
+    "total_cost": 0.5,
+    "total_input_tokens": 1000,
+    "total_output_tokens": 500,
+    "avg_cost_per_completed": 0.5,
+    "most_expensive_task": "TASK-001",
+    "pr_review_cost": 0.75,
+    "pr_review_unmeasured_calls": 1,
+    "repo_total_cost": 1.25,
+    "pr_ledger_since": "2.31.0"
+  },
+  "pr_reviews": [
+    {
+      "repo": "andrei-shtanakov/spec-runner-vscode",
+      "pr_number": 23,
+      "calls": 4,
+      "cost": 0.75,
+      "unmeasured_calls": 1,
+      "input_tokens": 2000,
+      "output_tokens": 800
+    }
+  ]
+}
