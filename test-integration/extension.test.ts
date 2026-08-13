@@ -65,7 +65,9 @@ describe("spec-runner extension (integration)", () => {
 
     // spec-runner ≥ 2.29.0 contract: `unmeasured_calls` must survive the
     // vendored-schema parse (a stale schema fails it and the tree stays
-    // empty), and a floor cost must render as ≥$ like the CLI does.
+    // empty), and a floor cost must render as ≥$ like the CLI does. The fake
+    // CLI also emits the ≥ 2.31.0 review-pr ledger (`pr_reviews` + summary
+    // keys), so these assertions double as that contract's pin.
     assert.strictEqual(t1?.unmeasuredCalls, 2);
     const t1Item = items.find((i) => String(i.label).includes("TASK-001"));
     assert.ok(
