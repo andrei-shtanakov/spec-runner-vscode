@@ -74,25 +74,25 @@
 
 ### CI и поставка
 
-- [ ] Сделать job `test` обязательным чеком в branch protection для `master` @owner:github:andrei-shtanakov @id:branch-protection-required-test
+- [ ] Сделать job `test` обязательным чеком в branch protection для `master` @owner:github:andrei-shtanakov @id:branch-protection-required-test @epic:eco.spec-toolchain
 
   Воркфлоу сам по себе мерж не блокирует: красный CI сейчас лишь виден. Правится в
   Settings → Branches, кодом не закрывается.
 
-- [ ] Решить, публикуется ли расширение в Marketplace @owner:github:andrei-shtanakov @id:marketplace-publication-decision
+- [ ] Решить, публикуется ли расширение в Marketplace @owner:github:andrei-shtanakov @id:marketplace-publication-decision @epic:eco.spec-toolchain
 
   Сейчас `0.1.0 — unreleased`, `publisher` в манифесте есть, установка руками через
   `.vsix --force` + Reload Window. Если публикация не планируется — зафиксировать это
   явно в README, чтобы `publisher` не читался как обещание.
 
-- [ ] Бампнуть `actions/checkout`, `actions/setup-node`, `actions/cache` на v5 @trigger:"GitHub опубликует v5 всех трёх" @id:github-actions-v5-upgrade
+- [ ] Бампнуть `actions/checkout`, `actions/setup-node`, `actions/cache` на v5 @trigger:"GitHub опубликует v5 всех трёх" @id:github-actions-v5-upgrade @epic:eco.spec-toolchain
 
   Сейчас CI пишет annotation: экшены собраны под Node 20 и принудительно запускаются на
   Node 24. На результат не влияет, но шум в каждом прогоне.
 
 ### Зависимости
 
-- [ ] `brace-expansion` под `mocha` остаётся уязвим (GHSA-mh99-v99m-4gvg, high) @trigger:"выйдет релиз ветки 2.x выше 5.0.7-эквивалента" @id:brace-expansion-advisory
+- [ ] `brace-expansion` под `mocha` остаётся уязвим (GHSA-mh99-v99m-4gvg, high) @trigger:"выйдет релиз ветки 2.x выше 5.0.7-эквивалента" @id:brace-expansion-advisory @epic:eco.spec-toolchain
 
   Диапазон адвизори `<=5.0.7` покрывает всю ветку 2.x, фикса для неё нет. Dev-only,
   в `dist/extension.js` не попадает (esbuild собирает с `external: ["vscode"]`).
