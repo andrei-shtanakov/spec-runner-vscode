@@ -57,20 +57,25 @@ describe("editorSeedIssue", () => {
 
 describe("overwriteWarning", () => {
   it("is silent when the stage does not exist yet", () => {
-    expect(overwriteWarning(stage({}))).toBeNull();
+    expect(overwriteWarning(stage({}), false)).toBeNull();
   });
   it("warns that an approved stage is replaced and downstream may go stale", () => {
-    const msg = overwriteWarning(stage({ status: "approved", exists: true, managed: true }));
+    const msg = overwriteWarning(stage({ status: "approved", exists: true, managed: true }), true);
     expect(msg).toMatch(/approved/);
     expect(msg).toMatch(/stale/);
   });
   it("warns that an existing draft is replaced", () => {
-    const msg = overwriteWarning(stage({ status: "draft", exists: true, managed: true }));
+    const msg = overwriteWarning(stage({ status: "draft", exists: true, managed: true }), true);
     expect(msg).toMatch(/draft/);
     expect(msg).not.toMatch(/stale/);
   });
+  it("warns when the file is on disk but unreadable — unknown is not absent", () => {
+    // readStage folds any read error (EACCES) into exists: false.
+    const msg = overwriteWarning(stage({}), true);
+    expect(msg).toMatch(/could not be read/);
+  });
   it("warns about an unmanaged file that exists on disk", () => {
-    const msg = overwriteWarning(stage({ status: "missing", exists: true, managed: false }));
+    const msg = overwriteWarning(stage({ status: "missing", exists: true, managed: false }), true);
     expect(msg).toMatch(/not managed/);
   });
 });

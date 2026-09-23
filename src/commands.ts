@@ -1,5 +1,6 @@
 // Command handlers: map GUI actions → SpecRunnerCli / controller, with a modal
 // confirm wherever code executes or budget is spent.
+import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
 
@@ -198,7 +199,10 @@ export function registerCommands(context: vscode.ExtensionContext, deps: Deps): 
       );
       return;
     }
-    const overwrite = overwriteWarning(readStage(cfg.specDir, stage, cfg.specPrefix));
+    const overwrite = overwriteWarning(
+      readStage(cfg.specDir, stage, cfg.specPrefix),
+      fs.existsSync(target),
+    );
     const question = overwrite ?? `Generate ${stage} from ${path.basename(doc.uri.fsPath)}?`;
     if ((overwrite || cfg.confirmBeforeGenerate) && !(await confirm(question))) {
       return;

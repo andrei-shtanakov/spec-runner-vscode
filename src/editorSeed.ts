@@ -46,12 +46,18 @@ export function editorSeedIssue(
   return null;
 }
 
-/** Confirmation text when generating would replace an existing stage file. */
-export function overwriteWarning(info: StageInfo): string | null {
-  if (!info.exists) {
-    return null;
-  }
+/**
+ * Confirmation text when generating would replace an existing stage file.
+ * `onDisk` is checked independently of `info`: readStage folds read errors
+ * (EACCES) into `exists: false`, and an unknown state must not pass as absent.
+ */
+export function overwriteWarning(info: StageInfo, onDisk: boolean): string | null {
   const name = `${info.stage}.md`;
+  if (!info.exists) {
+    return onDisk
+      ? `${name} exists but could not be read. Generating replaces it. Continue?`
+      : null;
+  }
   if (!info.managed) {
     return `${name} exists but is not managed by spec-runner. Generating replaces it. Continue?`;
   }
