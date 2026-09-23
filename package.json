@@ -79,6 +79,11 @@
         "icon": "$(edit)"
       },
       {
+        "command": "specRunner.generateFromEditor",
+        "title": "spec-runner: Generate spec from this file",
+        "icon": "$(sparkle)"
+      },
+      {
         "command": "specRunner.generateNext",
         "title": "spec-runner: Generate next stage"
       },
@@ -104,6 +109,19 @@
       }
     ],
     "menus": {
+      "editor/title": [
+        {
+          "command": "specRunner.generateFromEditor",
+          "when": "specRunner.active && !specRunner.readOnly && resourceScheme == file",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "specRunner.generateFromEditor",
+          "when": "specRunner.active && editorIsOpen"
+        }
+      ],
       "view/title": [
         {
           "command": "specRunner.refresh",

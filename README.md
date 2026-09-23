@@ -40,6 +40,15 @@ All writes/execution go through the CLI: `spec approve/reject/check`,
 for its seed as a typed one-liner or a file (passed via `--from-file` — the
 right channel for long descriptions).
 
+**Generate spec from this file** (editor toolbar `$(sparkle)`, or the Command
+Palette) seeds the `requirements` stage with the file open in the editor:
+unsaved changes are saved first, then `plan --gated --stage requirements
+--from-file <file>` runs and the generated `requirements.md` opens in the
+neighbouring editor column, keeping focus on the source. Untitled documents and
+the spec files themselves are refused; replacing an existing `requirements`
+always asks first. Design and tasks follow through the Spec tree, one approved
+stage at a time.
+
 ## Requirements
 
 - **spec-runner ≥ 2.8.1** installed separately (this extension does not bundle

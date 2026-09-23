@@ -6,8 +6,9 @@ import * as vscode from "vscode";
 import { ACTIONS, type SpecRunnerCli } from "./cli";
 import type { ResolvedConfig } from "./config";
 import type { SpecRunnerController } from "./controller";
+import { editorSeedIssue, overwriteWarning, stageForPath } from "./editorSeed";
 import type { RunOutput } from "./output";
-import { stageFileName } from "./specState";
+import { readStage, stageFileName } from "./specState";
 import type { StageName } from "./types";
 
 interface Deps {
@@ -175,6 +176,53 @@ export function registerCommands(context: vscode.ExtensionContext, deps: Deps): 
     await generate({ stage: target }, false);
   });
 
+  reg("specRunner.generateFromEditor", async () => {
+    if (guardReadOnly(deps.readOnly)) {
+      return;
+    }
+    const doc = vscode.window.activeTextEditor?.document;
+    if (!doc) {
+      void vscode.window.showWarningMessage("Open the source document in an editor first.");
+      return;
+    }
+    const issue = editorSeedIssue(doc.uri.scheme, doc.uri.fsPath, cfg);
+    if (issue) {
+      void vscode.window.showWarningMessage(issue);
+      return;
+    }
+    const stage: StageName = "requirements";
+    const target = path.join(cfg.specDir, stageFileName(stage, cfg.specPrefix));
+    if (vscode.workspace.textDocuments.some((d) => d.uri.fsPath === target && d.isDirty)) {
+      void vscode.window.showWarningMessage(
+        `${path.basename(target)} has unsaved changes — save or revert it before generating.`,
+      );
+      return;
+    }
+    const overwrite = overwriteWarning(readStage(cfg.specDir, stage, cfg.specPrefix));
+    const question = overwrite ?? `Generate ${stage} from ${path.basename(doc.uri.fsPath)}?`;
+    if ((overwrite || cfg.confirmBeforeGenerate) && !(await confirm(question))) {
+      return;
+    }
+    // --from-file reads the disk, so what the editor shows must be on disk.
+    if (doc.isDirty && !(await doc.save())) {
+      void vscode.window.showErrorMessage("Could not save the seed file — generation cancelled.");
+      return;
+    }
+    output.show();
+    const ok = await runAndReport(
+      deps,
+      ACTIONS.generate(stage, undefined, doc.uri.fsPath),
+      `Generate ${stage}`,
+    );
+    await controller.refresh();
+    if (ok) {
+      await vscode.window.showTextDocument(vscode.Uri.file(target), {
+        viewColumn: vscode.ViewColumn.Beside,
+        preserveFocus: true,
+      });
+    }
+  });
+
   reg("specRunner.edit", async (arg) => {
     const stage = stageOf(arg);
     if (!stage) {
@@ -219,13 +267,4 @@ export function registerCommands(context: vscode.ExtensionContext, deps: Deps): 
       }
     }),
   );
-}
-
-function stageForPath(cfg: ResolvedConfig, fsPath: string): StageName | null {
-  for (const stage of ["requirements", "design", "tasks"] as StageName[]) {
-    if (path.join(cfg.specDir, stageFileName(stage, cfg.specPrefix)) === fsPath) {
-      return stage;
-    }
-  }
-  return null;
 }

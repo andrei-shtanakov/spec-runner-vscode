@@ -146,7 +146,20 @@ if (cmd === "run") {
   process.exit(0);
 }
 
-// Action commands (spec approve/reject/check, plan) — succeed silently.
+if (cmd === "plan") {
+  // Like the real CLI, `plan --gated --stage <s>` writes a DRAFT stage file,
+  // so "open the generated spec beside" has something to open.
+  const stage = argIndexValue(args, "--stage");
+  if (stage) {
+    fs.writeFileSync(
+      path.join(__dirname, "..", "spec", `${stage}.md`),
+      `---\nspec_stage: ${stage}\nstatus: draft\nversion: 1\n---\n\n# ${stage}\n`,
+    );
+  }
+  process.exit(0);
+}
+
+// Action commands (spec approve/reject/check) — succeed silently.
 process.exit(0);
 
 function argIndexValue(a, flag) {
