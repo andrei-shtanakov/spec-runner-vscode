@@ -102,6 +102,11 @@
 
 ## Закрыто
 
+- [x] Ре-вендор `json-result` и `spec-frontmatter` до spec-runner v3.0.0 @owner:github:andrei-shtanakov @id:revendor-schemas-v3
+  Дрейф: аддитивные ключи `no_op`/`verify_outcome`/`verify_composition` (≥2.16/2.36) и
+  SpecMeta contract v2 (`owner_role`, чужие ключи, `spec_stage` из профиля). Был
+  нефатальным — ложные предупреждения в output/console. Пин остаётся 2.8.1: схемы
+  только ослаблены, старые версии им удовлетворяют.
 - [x] `spec-runner.specPrefix` не доходил до CLI: upstream исправил обе позиции флага @owner:github:andrei-shtanakov @id:spec-prefix-swallow
   (`4ef5787`, spec-runner #93), а smoke на 2.21.0 подтвердил вызов расширения без
   локального workaround.

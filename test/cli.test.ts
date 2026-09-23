@@ -7,8 +7,13 @@ import {
   SpecRunnerCli,
   buildArgs,
   parseJsonResult,
+  parseRunResult,
 } from "../src/cli";
-import { validateCosts, validateStatus } from "../src/schemas";
+import {
+  validateCosts,
+  validateFrontmatter,
+  validateStatus,
+} from "../src/schemas";
 
 const FIX = path.join(__dirname, "fixtures");
 
@@ -125,6 +130,32 @@ describe("parseJsonResult against vendored schemas", () => {
     };
     const r = parseJsonResult(JSON.stringify(empty), validateCosts);
     expect(r.ok).toBe(true);
+  });
+  it("accepts the additive --json-result keys (no_op, verify_*)", () => {
+    // spec-runner ≥ 2.16 emits `no_op`, ≥ 2.36 `verify_outcome` and
+    // `verify_composition` — all optional. A stale vendored schema flagged
+    // every such run as "did not validate" in the output channel.
+    const raw = JSON.stringify({
+      task_id: "TASK-001",
+      status: "done",
+      attempts: 1,
+      no_op: true,
+      verify_outcome: "green",
+      verify_composition: { size: 3, executed: 2, skipped: 1 },
+    });
+    expect(parseRunResult(raw).ok).toBe(true);
+  });
+  it("accepts SpecMeta contract v2 frontmatter (owner_role, foreign keys)", () => {
+    // spec-runner ≥ 2.11: extending layers (steward) keep their own keys in
+    // the frontmatter and spec_stage comes from the configured profile.
+    const fm = {
+      spec_stage: "tasks",
+      status: "approved",
+      version: 2,
+      owner_role: "platform",
+      steward_note: "foreign key preserved losslessly",
+    };
+    expect(validateFrontmatter(fm)).toBe(true);
   });
   it("rejects malformed JSON", () => {
     const r = parseJsonResult("{not json", validateStatus);
