@@ -60,6 +60,38 @@
           "type": "string",
           "maxLength": 200
         },
+        "no_op": {
+          "description": "Present (and true) when the task completed without any committable changes — its work was already absorbed by earlier tasks (v2.16.0, #97)",
+          "type": "boolean",
+          "enum": [true]
+        },
+        "verify_outcome": {
+          "description": "Present only when the task recorded live verify-first evidence (execution_mode: verify_first, #367). The outcome of that run, independent of the task's TDD/standard completion path",
+          "type": "string",
+          "enum": ["green", "test_failure", "instrument_error"]
+        },
+        "verify_composition": {
+          "description": "Present only when the recorded verify-first evidence carries a file-target composition (verify-first-file-scope-group-targets workstream, FR-21/FR-22). A green run whose composition has skipped >= 1 is distinguishable from one where every member executed without comparing compositions by hand.",
+          "type": "object",
+          "properties": {
+            "size": {
+              "description": "Total number of composition members the collection phase reported.",
+              "type": "integer",
+              "minimum": 0
+            },
+            "executed": {
+              "description": "Members whose outcome was passed/failed/error (actually ran).",
+              "type": "integer",
+              "minimum": 0
+            },
+            "skipped": {
+              "description": "Members accounted for but never executed (skipped/xfail/deselected).",
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": ["size", "executed", "skipped"]
+        },
         "exit_code": {
           "type": "integer",
           "enum": [0, 1]
