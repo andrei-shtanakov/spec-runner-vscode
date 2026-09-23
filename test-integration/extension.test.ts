@@ -140,4 +140,62 @@ describe("spec-runner extension (integration)", () => {
     await vscode.commands.executeCommand("specRunner.approve", { stage: "design" });
     assert.ok(readCalls().includes("spec approve design"), `calls.log:\n${readCalls()}`);
   });
+
+  describe("Generate spec from this file", () => {
+    const reqPath = () => path.join(workspaceRoot(), "spec", "requirements.md");
+    const seedPath = () => path.join(workspaceRoot(), "idea.md");
+    let original = "";
+
+    beforeEach(() => {
+      original = fs.readFileSync(reqPath(), "utf8");
+      // Stage missing → no overwrite modal (it cannot be answered in a test).
+      fs.rmSync(reqPath());
+      fs.writeFileSync(seedPath(), "# Idea\n\nA feature to specify.\n");
+      clearCalls();
+    });
+
+    afterEach(async () => {
+      await vscode.commands.executeCommand("workbench.action.closeAllEditors");
+      fs.writeFileSync(reqPath(), original);
+      fs.rmSync(seedPath(), { force: true });
+      await api.controller.refresh();
+    });
+
+    it("saves the dirty seed, runs `plan --from-file` and opens requirements beside", async function () {
+      this.timeout(20000);
+      const doc = await vscode.workspace.openTextDocument(seedPath());
+      const editor = await vscode.window.showTextDocument(doc, vscode.ViewColumn.One);
+      await editor.edit((e) => e.insert(new vscode.Position(3, 0), "Unsaved line.\n"));
+      assert.ok(doc.isDirty, "precondition: seed has unsaved changes");
+
+      await vscode.commands.executeCommand("specRunner.generateFromEditor");
+
+      assert.ok(fs.readFileSync(seedPath(), "utf8").includes("Unsaved line."), "seed auto-saved");
+      assert.ok(
+        readCalls().includes(
+          `plan --gated --stage requirements --no-interactive --from-file ${seedPath()}`,
+        ),
+        `calls.log:\n${readCalls()}`,
+      );
+      const spec = vscode.window.visibleTextEditors.find(
+        (e) => e.document.uri.fsPath === reqPath(),
+      );
+      assert.ok(spec, "requirements.md is visible");
+      assert.strictEqual(spec.viewColumn, vscode.ViewColumn.Two, "opened beside the seed");
+      assert.strictEqual(
+        vscode.window.activeTextEditor?.document.uri.fsPath,
+        seedPath(),
+        "focus stays on the seed",
+      );
+    });
+
+    it("refuses an untitled document without calling the CLI", async () => {
+      const doc = await vscode.workspace.openTextDocument({ content: "draft idea" });
+      await vscode.window.showTextDocument(doc);
+
+      await vscode.commands.executeCommand("specRunner.generateFromEditor");
+
+      assert.ok(!readCalls().includes("plan"), `calls.log:\n${readCalls()}`);
+    });
+  });
 });

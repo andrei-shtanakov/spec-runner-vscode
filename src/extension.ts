@@ -48,6 +48,10 @@ export async function activate(
   // --- binary + version-pin gate -----------------------------------------
   await gateReadiness(cfg, cli, readOnlyFlag);
   controller.setReadOnly(readOnlyFlag.value);
+  // Menu `when` clauses: editor-toolbar entry points show only for an active,
+  // writable project (handlers still guard read-only on their own).
+  void vscode.commands.executeCommand("setContext", "specRunner.active", true);
+  void vscode.commands.executeCommand("setContext", "specRunner.readOnly", readOnlyFlag.value);
 
   // --- trees --------------------------------------------------------------
   const specTree = new SpecTreeProvider(controller);
